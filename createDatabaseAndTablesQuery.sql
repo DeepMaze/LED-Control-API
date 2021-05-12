@@ -1,0 +1,37 @@
+CREATE DATABASE IF NOT EXISTS `light_control`;
+
+CREATE TABLE IF NOT EXISTS `Configs` (
+    `ID` INT NOT NULL AUTO_INCREMENT, 
+    `Config_Key` VARCHAR(255) NOT NULL, 
+    `Config_Value` BOOLEAN NOT NULL, 
+    `Created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (`ID`, `Config_Key`)
+);
+
+CREATE TABLE IF NOT EXISTS `Lights` (
+	`ID` INT NOT NULL AUTO_INCREMENT,
+    `Light_Key` VARCHAR(100) NOT NULL, 
+    `Light_Value` VARCHAR(100) NOT NULL,
+    `Light_RGB` BOOLEAN NOT NULL,
+    `Light_Dimmable` BOOLEAN NOT NULL,
+    `Created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Users` (
+	`ID` int NOT NULL AUTO_INCREMENT,
+	`UserName` varchar(50) NOT NULL,
+    `PassWord_Encrypted` varchar(255) NOT NULL,
+    `RoleID` INT NOT NULL,
+	`Created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`ID`, `UserName`),
+    FOREIGN KEY (`RoleID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Roles` (
+	`ID` INT NOT NULL AUTO_INCREMENT,
+	`Label` varchar(50) NOT NULL,
+	`Description` varchar(255) NOT NULL,
+	`Created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`ID`, `UserName`)
+);
