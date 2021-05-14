@@ -1,6 +1,6 @@
 const configs = [
-    { Config_Key: 'enableAccountCreation', Config_Value: true },
-    { Config_Key: 'useAccounts', Config_Value: true }
+    { Key: 'enableAccountCreation', Value: true },
+    { Key: 'useAccounts', Value: true }
 ]
 
 module.exports = configs

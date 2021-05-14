@@ -10,7 +10,7 @@ var router = express.Router()
 
 router.get('/getConfig', async (req, res, next) => {
     var query = `
-        SELECT \`Config_Key\`, \`Config_Value\` 
+        SELECT \`Key\`, \`Value\` 
         FROM \`Configs\``
     try {
         var [rows] = await queryDB(query)
@@ -21,15 +21,15 @@ router.get('/getConfig', async (req, res, next) => {
     res.status(200).send(rows)
 })
 
-router.post('/updateConfig', authenticateToken, async (req, res, next) => {
-    var data = JSON.parse(req.body)
+router.post('/updateConfig', /* authenticateToken ,*/ async (req, res, next) => {
+    var data = req.body
     for (key in data) {
         var query = `
             UPDATE \`Configs\` 
-            SET \`Config_Value\` = ${mysql.escape(data[key])} 
-            WHERE \`Config_Key\` = ${mysql.escape(key)};`
+            SET \`Value\` = ${mysql.escape(data[key])} 
+            WHERE \`Key\` = ${mysql.escape(key)};`
         try {
-            queryDB(query)
+            await queryDB(query)
         } catch (err) {
             if (process.env.DEBUG) console.error('[ERROR]: ', err)
             res.status(500).send()

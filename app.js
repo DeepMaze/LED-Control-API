@@ -11,7 +11,7 @@ var prepareDB = require('./helper/prepareDB')
 var app = express()
 
 var cors = require('cors')
-app.use(cors({ origin: 'http://localhost:5500' }))
+app.use(cors({ origin: 'http://127.0.0.1:8181' }))
 
 app.use(logger('dev'))
 app.use(express.json())
@@ -25,7 +25,6 @@ const routes = [
     { path: '/login', file: './routes/light' },
     { path: '/config', file: './routes/config' },
     { path: '/user', file: './routes/user' },
-    { path: '/role', file: './routes/role' },
     { path: '/light', file: './routes/light' }
 ]
 
