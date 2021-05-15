@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `Lights` (
     `RGB` BOOLEAN NOT NULL,
     `Color` VARCHAR(7) NOT NULL,
     `Dimmable` BOOLEAN NOT NULL,
-    `Luminosity` INT NOT NULL,
+    `Luminosity` FLOAT(2,1) NOT NULL,
     `Created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`ID`, `Key`)
 );

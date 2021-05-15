@@ -58,12 +58,33 @@ router.get('/createLight', async (req, res, next) => {
     res.status(204).send({ success: true })
 })
 
+router.put('/updateLights', async (req, res, next) => {
+    var data = req.body
+    for (var item of data) {
+        var query = `
+            UPDATE \`Lights\` 
+            SET \`Key\` = ${mysql.escape(item['Key'])},
+            \`Color\` = ${mysql.escape(item['Color'])},
+            \`Luminosity\` = ${mysql.escape(parseInt(item['Luminosity']))} 
+            WHERE \`Key\` = ${mysql.escape(item['Key'])}`
+        try {
+            await queryDB(query)
+        } catch (err) {
+            if (process.env.DEBUG) console.error('[ERROR]: ', err)
+            res.status(500).send()
+        }
+    }
+    res.status(204).send()
+})
+
 router.put('/updateLight', async (req, res, next) => {
-    var data = JSON.parse(req.body)
+    var data = req.body
     var query = `
-        UPDATE \`Lights\` 
-        SET ${buildUpdateSetString(data)} 
-        WHERE \`Key\` = ${mysql.escape(data['Key'])}`
+            UPDATE \`Lights\` 
+            SET \`Key\` = ${mysql.escape(data['Key'])},
+            \`Color\` = ${mysql.escape(data['Color'])},
+            \`Luminosity\` = ${mysql.escape(parseFloat(data['Luminosity']))} 
+            WHERE \`Key\` = ${mysql.escape(data['Key'])}`
     try {
         await queryDB(query)
     } catch (err) {
