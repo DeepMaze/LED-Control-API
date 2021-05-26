@@ -39,45 +39,28 @@ router.get('/getLight', async (req, res, next) => {
     res.status(200).send(rows)
 })
 
-router.get('/createLight', async (req, res, next) => {
-    var data = JSON.parse(req.query)
+router.put('/createLight', async (req, res, next) => {
+    var data = req.body
     var query = `
-        INSERT INTO \`Lights\` (\`Key\`, \`RGB\`, \`Dimmable\`)
+        INSERT INTO \`Lights\` (\`Key\`, \`RGB\`, \`Color\`, \`Dimmable\`, \`Luminosity\`)
         VALUES (
-            ${mysql.escape(data['Key'])}, 
+            ${mysql.escape(data['Key'])},
             ${mysql.escape(data['RGB'])},
-            ${mysql.escape(data['Dimmable'])}
+            ${mysql.escape('#000000')},
+            ${mysql.escape(data['Dimmable'])},
+            ${mysql.escape(0)}
         )`
     try {
         await queryDB(query)
     } catch (err) {
         if (process.env.DEBUG) console.error('[ERROR]: ', err)
-        res.status(500).send({ success: false })
+        res.status(500).send()
         return;
-    }
-    res.status(204).send({ success: true })
-})
-
-router.put('/updateLights', async (req, res, next) => {
-    var data = req.body
-    for (var item of data) {
-        var query = `
-            UPDATE \`Lights\` 
-            SET \`Key\` = ${mysql.escape(item['Key'])},
-            \`Color\` = ${mysql.escape(item['Color'])},
-            \`Luminosity\` = ${mysql.escape(parseInt(item['Luminosity']))} 
-            WHERE \`Key\` = ${mysql.escape(item['Key'])}`
-        try {
-            await queryDB(query)
-        } catch (err) {
-            if (process.env.DEBUG) console.error('[ERROR]: ', err)
-            res.status(500).send()
-        }
     }
     res.status(204).send()
 })
 
-router.put('/updateLight', async (req, res, next) => {
+router.patch('/updateLight', async (req, res, next) => {
     var data = req.body
     var query = `
             UPDATE \`Lights\` 
@@ -94,8 +77,8 @@ router.put('/updateLight', async (req, res, next) => {
     res.status(204).send()
 })
 
-router.post('/deleteLight', async (req, res, next) => {
-    var data = JSON.parse(req.body)
+router.delete('/deleteLight', async (req, res, next) => {
+    var data = req.body
     var query = `
         DELETE FROM \`Lights\` 
         WHERE \`Key\` = ${mysql.escape(data['Key'])}`

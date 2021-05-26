@@ -11,7 +11,7 @@ var prepareDB = require('./helper/prepareDB')
 var app = express()
 
 var cors = require('cors')
-app.use(cors({ origin: 'http://127.0.0.1:8181' }))
+app.use(cors({ origin: '*' }))
 
 app.use(logger('dev'))
 app.use(express.json())
