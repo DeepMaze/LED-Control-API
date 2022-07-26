@@ -1,23 +1,18 @@
-var express = require('express')
-var mysql = require('mysql2/promise')
-
-var { authenticateToken } = require('../helper/token')
-var queryDB = require('../helper/queryDB')
-var encrypt = require('../helper/encryption')
-var buildUpdateSetString = require('../helper/buildUpdateSetString')
-
-
-
-var router = express.Router()
+const express = require('express')
+const mysql = require('mysql2/promise')
+const { authenticateToken } = require('../helper/token')
+const queryDB = require('../helper/queryDB')
+const router = express.Router()
 
 // router.use('/*', authenticateToken);
 
 router.get('/getLights', async (req, res, next) => {
-    var query = `
+    let query = `
         SELECT * 
-        FROM \`Lights\``
+        FROM \`lights\``
+    let rows
     try {
-        var [rows] = await queryDB(query)
+        [rows] = await queryDB(query)
     } catch (err) {
         res.status(500).send()
     }
@@ -25,13 +20,13 @@ router.get('/getLights', async (req, res, next) => {
 })
 
 router.get('/getLight', async (req, res, next) => {
-    var data = JSON.parse(req.query)
-    var query = `
+    let query = `
         SELECT * 
-        FROM \`Lights\` 
-        WHERE ${mysql.escape(data['ID'])}`
+        FROM \`lights\` 
+        WHERE ${mysql.escape(req.query['id'])}`
+    let rows
     try {
-        var [rows] = await queryDB(query)
+        [rows] = await queryDB(query)
     } catch (err) {
         if (process.env.DEBUG) console.error('[ERROR]: ', err)
         res.status(500).send()
@@ -40,14 +35,13 @@ router.get('/getLight', async (req, res, next) => {
 })
 
 router.put('/createLight', async (req, res, next) => {
-    var data = req.body
-    var query = `
-        INSERT INTO \`Lights\` (\`Key\`, \`RGB\`, \`Color\`, \`Dimmable\`, \`Luminosity\`)
+    let query = `
+        INSERT INTO \`lights\` (\`key\`, \`is_rgb\`, \`color\`, \`dimmable\`, \`luminosity\`)
         VALUES (
-            ${mysql.escape(data['Key'])},
-            ${mysql.escape(data['RGB'])},
+            ${mysql.escape(req.query['key'])},
+            ${mysql.escape(req.query['is_rgb'])},
             ${mysql.escape('#000000')},
-            ${mysql.escape(data['Dimmable'])},
+            ${mysql.escape(req.query['dimmable'])},
             ${mysql.escape(0)}
         )`
     try {
@@ -61,13 +55,12 @@ router.put('/createLight', async (req, res, next) => {
 })
 
 router.patch('/updateLight', async (req, res, next) => {
-    var data = req.body
-    var query = `
-            UPDATE \`Lights\` 
-            SET \`Key\` = ${mysql.escape(data['Key'])},
-            \`Color\` = ${mysql.escape(data['Color'])},
-            \`Luminosity\` = ${mysql.escape(parseFloat(data['Luminosity']))} 
-            WHERE \`Key\` = ${mysql.escape(data['Key'])}`
+    let query = `
+            UPDATE \`lights\` 
+            SET \`key\` = ${mysql.escape(req.query['key'])},
+            \`color\` = ${mysql.escape(req.query['color'])},
+            \`luminosity\` = ${mysql.escape(parseFloat(req.query['luminosity']))} 
+            WHERE \`key\` = ${mysql.escape(req.body['key'])}`
     try {
         await queryDB(query)
     } catch (err) {
@@ -78,10 +71,9 @@ router.patch('/updateLight', async (req, res, next) => {
 })
 
 router.delete('/deleteLight', async (req, res, next) => {
-    var data = req.body
-    var query = `
-        DELETE FROM \`Lights\` 
-        WHERE \`Key\` = ${mysql.escape(data['Key'])}`
+    let query = `
+        DELETE FROM \`lights\` 
+        WHERE \`key\` = ${mysql.escape(req.query['key'])}`
     try {
         await queryDB(query)
     } catch (err) {

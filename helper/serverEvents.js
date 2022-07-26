@@ -1,16 +1,14 @@
-var debug = require('debug')('geraeteverwaltungapi:server')
-
-
+const debug = require('debug')('geraeteverwaltungapi:server')
 
 function onListening(server) {
-    var addr = (server) ? (server.address()) : ('')
-    var bind = (typeof addr === 'string') ? (`pipe ${addr}`) : (`port ${addr.port}`)
+    let addr = (server) ? (server.address()) : ('')
+    let bind = (typeof addr === 'string') ? (`port ${addr}`) : (`port ${addr.port}`)
     debug(`Listening on ${bind}`)
 }
 
 function onError(error) {
     if (error.syscall !== 'listen') throw error
-    var bind = (typeof port === 'string') ? (`Pipe ${port}`) : (`Port ${port}`)
+    let bind = (typeof port === 'string') ? (`Port ${port}`) : (`Port ${port}`)
     if (error.code == 'EACCES') console.error(`${bind} requires elevated privileges`)
     else if (error.code == 'EADDRINUSE') console.error(`${bind} is already in use`)
     else throw error

@@ -1,18 +1,16 @@
 #!/usr/bin/env node
 require('dotenv').config()
 
-var app = require('../app')
-var http = require('http')
+let app = require('../app')
+let http = require('http')
 
-var normalizePort = require('../helper/normalizePort')
-var { onError, onListening } = require('../helper/serverEvents')
+let normalizePort = require('../helper/normalizePort')
+let { onError, onListening } = require('../helper/serverEvents')
 
-
-
-var port = normalizePort(process.env.PORT)
+let port = normalizePort(process.env.PORT)
 app.set('port', port)
 
-var server = http.createServer(app)
+let server = http.createServer(app)
 
 server.listen(port)
 

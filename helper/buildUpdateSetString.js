@@ -1,14 +1,12 @@
-var mysql = require('mysql2')
-
-
+const mysql = require('mysql2')
 
 function buildUpdateSetString(data) {
-    var set = ''
-    for (var key in data) {
-        if (key == 'ID') continue
+    let set = ''
+    for (let key in data) {
+        if (key == 'id') continue
         set += `${key} = ${mysql.escape(data[key])}, `
     }
-    set = `${set.substr(0, set.length - 2)} `
+    set = `${set.substring(0, set.length - 2)} `
     return set
 }
 

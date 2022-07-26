@@ -1,6 +1,6 @@
-function normalizePort(val) {
-    var port = parseInt(val, 10)
-    if (isNaN(port)) return val
+function normalizePort(value) {
+    let port = parseInt(value, 10)
+    if (isNaN(port)) return value
     if (port >= 0) return port
     return false
 }

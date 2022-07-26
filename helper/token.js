@@ -1,14 +1,15 @@
-var fs = require('fs')
-var path = require('path')
-var jwt = require('jsonwebtoken')
+const fs = require('fs')
+const path = require('path')
+const jwt = require('jsonwebtoken')
 
 
 const ACCESS_KEY = fs.readFileSync(path.resolve('keys\\private.key'), 'utf8')
 const PUBLIC_KEY = fs.readFileSync(path.resolve('keys\\public.key'), 'utf8')
 
 function createAccessToken(userID) {
+    let token
     try {
-        var token = jwt.sign({ userID }, ACCESS_KEY, { algorithm: 'RS256' })
+        token = jwt.sign({ userID }, ACCESS_KEY, { algorithm: 'RS256' })
     } catch (err) {
         throw err
     }

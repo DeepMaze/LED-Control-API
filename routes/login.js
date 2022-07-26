@@ -1,45 +1,42 @@
-var express = require('express')
-var mysql = require('mysql2/promise')
-var bcrypt = require('bcrypt')
-
-var queryDB = require('../helper/queryDB')
-var { createAccessToken } = require('../helper/token')
-
-
-
-var router = express.Router()
+const express = require('express')
+const mysql = require('mysql2/promise')
+const bcrypt = require('bcrypt')
+const queryDB = require('../helper/queryDB')
+const { createAccessToken } = require('../helper/token')
+const router = express.Router()
 
 router.get('/login', async (req, res, next) => {
-    var data = JSON.parse(req.query)
-    if (!data.userName || !data.passWord) res.status(400).send()
+    let data = JSON.parse(req.query)
+    if (!data?.username || !data?.password) res.status(400).send()
 
+    let userData
     try {
-        var loginResult = await checkLogin(req.query.userName)
+        let loginResult = await checkLogin(req.query.username)
         if (!loginResult) res.status(400).send()
 
-        var passWordResult = bcrypt.compare(data['passWord'], loginResult['PassWord_Encrypted'])
-        if (!passWordResult) res.status(400).send()
+        let passwordResult = bcrypt.compare(data['password'], loginResult['password_encrypted'])
+        if (!passwordResult) res.status(400).send()
 
-        var userData = {
-            userID: rows[0]['ID'],
-            userName: req.query['userName'],
+        userData = {
+            userID: rows[0]['id'],
+            userName: req.query['username'],
             token: createAccessToken(loginResult.userID)
         }
     } catch (err) {
         if (process.env.DEBUG) console.error('[ERROR]: ', err)
         res.status(500).send()
     }
-
     res.status(200).send(userData)
 })
 
-const checkLogin = async (userName) => {
-    var query = `
-        SELECT \`ID\`, \`PassWord_Encrypted\` 
-        FROM \`Users\` 
-        WHERE \`UserName\` = ${mysql.escape(userName)}`;
+const checkLogin = async (username) => {
+    let query = `
+        SELECT \`id\`, \`password_encrypted\` 
+        FROM \`users\` 
+        WHERE \`username\` = ${mysql.escape(username)}`;
+    let rows
     try {
-        var [rows] = await queryDB(query);
+        [rows] = await queryDB(query);
     } catch (err) {
         throw err
     }

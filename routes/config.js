@@ -1,19 +1,16 @@
-var express = require('express')
-var mysql = require('mysql2/promise')
-
-var { authenticateToken } = require('../helper/token')
-var queryDB = require('../helper/queryDB')
-
-
-
-var router = express.Router()
+const express = require('express')
+const mysql = require('mysql2/promise')
+const { authenticateToken } = require('../helper/token')
+const queryDB = require('../helper/queryDB')
+const router = express.Router()
 
 router.get('/getConfig', async (req, res, next) => {
-    var query = `
-        SELECT \`Key\`, \`Value\` 
-        FROM \`Configs\``
+    let query = `
+        SELECT \`key\`, \`value\` 
+        FROM \`configs\``
+    let rows
     try {
-        var [rows] = await queryDB(query)
+        [rows] = await queryDB(query)
     } catch (err) {
         if (process.env.DEBUG) console.error('[ERROR]: ', err)
         res.status(500).send()
@@ -22,12 +19,11 @@ router.get('/getConfig', async (req, res, next) => {
 })
 
 router.post('/updateConfig', /* authenticateToken ,*/ async (req, res, next) => {
-    var data = req.body
-    for (key in data) {
-        var query = `
-            UPDATE \`Configs\` 
-            SET \`Value\` = ${mysql.escape(data[key])} 
-            WHERE \`Key\` = ${mysql.escape(key)};`
+    for (key in req.query) {
+        let query = `
+            UPDATE \`configs\` 
+            SET \`value\` = ${mysql.escape(req.query[key])} 
+            WHERE \`key\` = ${mysql.escape(key)};`
         try {
             await queryDB(query)
         } catch (err) {

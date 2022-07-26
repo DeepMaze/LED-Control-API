@@ -1,23 +1,20 @@
-var express = require('express')
-var mysql = require('mysql2/promise')
-
-var { authenticateToken } = require('../helper/token')
-var queryDB = require('../helper/queryDB')
-var encrypt = require('../helper/encryption')
-var buildUpdateSetString = require('../helper/buildUpdateSetString')
-
-
-
-var router = express.Router()
+const express = require('express')
+const mysql = require('mysql2/promise')
+const { authenticateToken } = require('../helper/token')
+const queryDB = require('../helper/queryDB')
+const encrypt = require('../helper/encryption')
+const buildUpdateSetString = require('../helper/buildUpdateSetString')
+const router = express.Router()
 
 // router.use('/*', authenticateToken)
 
 router.get('/getUsersList', async (req, res, next) => {
-    var query = `
+    let query = `
         SELECT * 
-        FROM \`Users\``
+        FROM \`users\``
+    let rows
     try {
-        var [rows] = await queryDB(query)
+        [rows] = await queryDB(query)
     } catch (err) {
         res.status(500).send()
     }
@@ -25,13 +22,13 @@ router.get('/getUsersList', async (req, res, next) => {
 })
 
 router.get('/getUser', async (req, res, next) => {
-    var data = JSON.parse(req.query)
-    var query = `
+    let query = `
         SELECT * 
-        FROM \`Users\` 
-        WHERE ${mysql.escape(data['userID'])}`
+        FROM \`users\` 
+        WHERE ${mysql.escape(req.query['userID'])}`
+    let rows
     try {
-        var [rows] = await queryDB(query)
+        [rows] = await queryDB(query)
     } catch (err) {
         if (process.env.DEBUG) console.error('[ERROR]: ', err)
         res.status(500).send()
@@ -39,11 +36,10 @@ router.get('/getUser', async (req, res, next) => {
     res.status(200).send(rows)
 })
 
-router.get('/createUser', async (req, res, next) => {
-    var data = JSON.parse(req.query)
-    var query = `
-        INSERT INTO \`Users\` (\`UserName\`, \`PassWord_Encrypted\`)
-        VALUES (${mysql.escape(data['userName'])}, '${await encrypt(mysql.escape(data['passWord']))}')`
+router.post('/createUser', async (req, res, next) => {
+    let query = `
+        INSERT INTO \`users\` (\`username\`, \`password_encrypted\`)
+        VALUES (${mysql.escape(req.body['username'])}, '${await encrypt(mysql.escape(req.body['password']))}')`
     try {
         await queryDB(query)
     } catch (err) {
@@ -55,11 +51,10 @@ router.get('/createUser', async (req, res, next) => {
 })
 
 router.put('/updateUser', async (req, res, next) => {
-    var data = JSON.parse(req.body)
-    var query = `
-        UPDATE \`Users\` 
-        SET ${buildUpdateSetString(data['data'])} 
-        WHERE \`ID\` = ${mysql.escape(data['userID'])}`
+    let query = `
+        UPDATE \`users\` 
+        SET ${buildUpdateSetString(req.body['data'])} 
+        WHERE \`id\` = ${mysql.escape(req.body['userID'])}`
     try {
         await queryDB(query)
     } catch (err) {
@@ -69,11 +64,10 @@ router.put('/updateUser', async (req, res, next) => {
     res.status(204).send()
 })
 
-router.post('/deleteUser', async (req, res, next) => {
-    var data = JSON.parse(req.body)
-    var query = `
-        DELETE FROM \`Users\` 
-        WHERE \`ID\` = ${mysql.escape(data['userID'])}`
+router.delete('/deleteUser', async (req, res, next) => {
+    let query = `
+        DELETE FROM \`users\` 
+        WHERE \`id\` = ${mysql.escape(req.query['userID'])}`
     try {
         await queryDB(query)
     } catch (err) {
